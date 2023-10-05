@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class HackOktoberfestExceptionHandler {
 
-    private record ErrorResponse(HttpStatus status, String message) {
-    }
-
     @ExceptionHandler(UserException.class)
     private ResponseEntity<ErrorResponse> handleUserException(UserException ue) {
         return ResponseEntity.status(ue.getStatus()).body(new ErrorResponse(ue.getStatus(), ue.getMessage()));

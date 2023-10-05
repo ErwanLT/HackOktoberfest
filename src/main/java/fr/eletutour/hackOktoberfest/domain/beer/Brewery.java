@@ -1,6 +1,7 @@
 package fr.eletutour.hackOktoberfest.domain.beer;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Brewery {
@@ -8,10 +9,12 @@ public class Brewery {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     private String name;
 
     @OneToOne
     @JoinColumn(name = "adress_id")
+    @NotNull
     private Address address;
 
     public Brewery() {
