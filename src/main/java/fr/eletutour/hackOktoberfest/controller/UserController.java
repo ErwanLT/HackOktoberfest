@@ -1,7 +1,9 @@
 package fr.eletutour.hackOktoberfest.controller;
 
 import fr.eletutour.hackOktoberfest.domain.user.AppUser;
+import fr.eletutour.hackOktoberfest.domain.user.AuthRequest;
 import fr.eletutour.hackOktoberfest.exceptions.ErrorResponse;
+import fr.eletutour.hackOktoberfest.services.JwtService;
 import fr.eletutour.hackOktoberfest.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -10,6 +12,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +27,14 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
+
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Operation(summary = "Get all users")
@@ -90,6 +102,16 @@ public class UserController {
     @PutMapping("/{username}")
     public AppUser updateUser(@RequestBody AppUser newUser, @PathVariable String username) {
         return userService.upateUser(newUser, username);
+    }
+
+    @PostMapping("/generateToken")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(authRequest.getUsername());
+        } else {
+            throw new UsernameNotFoundException("invalid user request !");
+        }
     }
 
 }

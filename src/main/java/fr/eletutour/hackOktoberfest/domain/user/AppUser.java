@@ -3,7 +3,6 @@ package fr.eletutour.hackOktoberfest.domain.user;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
 public class AppUser {
@@ -17,6 +16,8 @@ public class AppUser {
     private String email;
 
     private String password;
+
+    private String roles;
 
     public AppUser() {
     }
@@ -66,6 +67,16 @@ public class AppUser {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", role='" + roles + '\'' +
                 '}';
     }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
 }
